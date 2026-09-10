@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Akmil • Quran Memory Tester</title>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <title>Waseel • Quran Memory Tester</title>
+  <!-- Dedicated Amiri Quran Font for Authentic Uthmani Script -->
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
     body {
@@ -73,13 +74,15 @@
       margin-top: 15px;
     }
 
+    /* Updated Arabic Typography Rules */
     .arabic {
-      font-size: 32px;
-      font-family: 'Amiri', serif;
+      font-size: 34px;
+      font-family: 'Amiri Quran', serif;
       direction: rtl;
       margin: 24px 0;
-      line-height: 2;
+      line-height: 2.3;
       color: #000000;
+      word-spacing: 4px;
     }
     .meta-tag {
       display: inline-block;
@@ -133,7 +136,7 @@
   </div>
 
   <script>
-    // 1. Populate the dropdown with options: Juzuk 1 to Juzuk 30
+    // Populate Juzuk dropdown (1 to 30)
     const juzSelect = document.getElementById('juzSelect');
     for (let i = 1; i <= 30; i++) {
       const opt = document.createElement('option');
@@ -145,14 +148,12 @@
     let currentSurah = null;
     let currentAyah = null;
 
-    // 2. Main function to generate random verse
     async function generateRandomAyah() {
       const selectedJuz = juzSelect.value;
       const quizSection = document.getElementById('quizSection');
       const revealBox = document.getElementById('revealBox');
       const status = document.getElementById('status');
 
-      // Reset view states
       quizSection.classList.add('hidden');
       revealBox.classList.add('hidden');
       document.getElementById('nextVerse').innerText = '';
@@ -163,18 +164,16 @@
       try {
         let ayahData;
 
+        // Using high-fidelity Uthmani endpoint: quran-uthmani-quran-academy
         if (selectedJuz === 'all') {
-          // Fetch from entire Quran
-          const res = await fetch('https://api.alquran.cloud/v1/ayah/random/quran-uthmani');
+          const res = await fetch('https://api.alquran.cloud/v1/ayah/random/quran-uthmani-quran-academy');
           const data = await res.json();
           ayahData = data.data;
         } else {
-          // Fetch specific Juzuk content
-          const res = await fetch(`https://api.alquran.cloud/v1/juz/${selectedJuz}/quran-uthmani`);
+          const res = await fetch(`https://api.alquran.cloud/v1/juz/${selectedJuz}/quran-uthmani-quran-academy`);
           const data = await res.json();
           const ayahsInJuz = data.data.ayahs;
           
-          // Select random index inside chosen Juzuk
           const randomIndex = Math.floor(Math.random() * ayahsInJuz.length);
           ayahData = ayahsInJuz[randomIndex];
         }
@@ -182,7 +181,6 @@
         currentSurah = ayahData.surah.number;
         currentAyah = ayahData.numberInSurah;
 
-        // Populate content
         document.getElementById('meta').innerText = `Surah ${ayahData.surah.englishName} (${currentSurah}:${currentAyah}) • Juzuk ${ayahData.juz}`;
         document.getElementById('arabicText').innerText = ayahData.text;
         
@@ -190,12 +188,11 @@
         quizSection.classList.remove('hidden');
 
       } catch (err) {
-        status.innerText = "Connection error. Please check internet connection.";
+        status.innerText = "Connection error. Please check your internet connection.";
         status.style.color = "#EE2A35";
       }
     }
 
-    // 3. Function to reveal the consecutive verse
     async function revealNextAyah() {
       const revealBox = document.getElementById('revealBox');
       const nextVerseDiv = document.getElementById('nextVerse');
@@ -205,7 +202,7 @@
       revealBox.classList.remove('hidden');
 
       try {
-        const res = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/quran-uthmani`);
+        const res = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/quran-uthmani-quran-academy`);
         const data = await res.json();
         
         if (data.code === 200) {
