@@ -29,25 +29,15 @@
   >
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
-      font-family:
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       text-align: center;
       padding: 20px;
       margin: 0;
       background-color: #ffffff;
       color: #000000;
     }
-
     .card {
       background-color: #ffffff;
       padding: 32px;
@@ -57,14 +47,12 @@
       border: 2px solid #000000;
       box-shadow: 8px 8px 0 #000000;
     }
-
     h2 {
       color: #000000;
       margin-top: 0;
       font-weight: 800;
       line-height: 1.3;
     }
-
     .controls {
       margin-bottom: 25px;
       display: flex;
@@ -72,7 +60,6 @@
       gap: 12px;
       align-items: center;
     }
-
     select {
       padding: 12px 16px;
       font-size: 16px;
@@ -86,33 +73,20 @@
       width: 100%;
       max-width: 250px;
     }
-
     .btn-group {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
     }
-
-    button {
-      font-family: inherit;
-    }
-
-    .btn-primary,
-    .btn-success,
-    .btn-outline,
-    .btn-audio {
+    button { font-family: inherit; }
+    .btn-primary, .btn-success, .btn-outline, .btn-audio {
       cursor: pointer;
       transition: transform 0.1s ease;
     }
-
-    .btn-primary:active,
-    .btn-success:active,
-    .btn-outline:active,
-    .btn-audio:active {
+    .btn-primary:active, .btn-success:active, .btn-outline:active, .btn-audio:active {
       transform: translateY(2px);
     }
-
     .btn-primary {
       padding: 14px 24px;
       font-size: 16px;
@@ -122,7 +96,6 @@
       background-color: #ee2a35;
       color: #ffffff;
     }
-
     .btn-success {
       padding: 12px 24px;
       font-size: 16px;
@@ -133,7 +106,6 @@
       color: #ffffff;
       margin-top: 15px;
     }
-
     .btn-outline {
       padding: 14px 20px;
       font-size: 15px;
@@ -143,12 +115,10 @@
       background-color: #ffffff;
       color: #000000;
     }
-
     .small-outline {
       padding: 8px 16px;
       font-size: 14px;
     }
-
     .btn-audio {
       background-color: #000000;
       color: #ffffff;
@@ -162,7 +132,6 @@
       align-items: center;
       gap: 6px;
     }
-
     .arabic {
       font-size: 34px;
       font-family: "Amiri Quran", serif;
@@ -173,7 +142,6 @@
       word-spacing: 4px;
       overflow-wrap: anywhere;
     }
-
     .translation-text {
       font-size: 15px;
       font-style: italic;
@@ -186,7 +154,6 @@
       line-height: 1.6;
       text-align: left;
     }
-
     .meta-tag {
       display: inline-block;
       background-color: #000000;
@@ -196,46 +163,24 @@
       font-weight: 700;
       font-size: 14px;
     }
-
     .reveal-box {
       margin-top: 20px;
       padding-top: 20px;
       border-top: 2px solid #000000;
     }
-
     .status-msg {
       font-weight: 600;
       margin: 15px 0;
       color: #ee2a35;
       line-height: 1.5;
     }
-
-    .hidden {
-      display: none !important;
-    }
-
+    .hidden { display: none !important; }
     @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-
-      .card {
-        padding: 22px 16px;
-        box-shadow: 5px 5px 0 #000000;
-      }
-
-      .arabic {
-        font-size: 29px;
-      }
-
-      .btn-primary,
-      .btn-outline {
-        width: 100%;
-      }
-
-      .btn-group {
-        width: 100%;
-      }
+      body { padding: 10px; }
+      .card { padding: 22px 16px; box-shadow: 5px 5px 0 #000000; }
+      .arabic { font-size: 29px; }
+      .btn-primary, .btn-outline { width: 100%; }
+      .btn-group { width: 100%; }
     }
   </style>
 </head>
@@ -245,20 +190,14 @@
     <h2>Waseel • Quran Memory Tester</h2>
 
     <div class="controls">
-      <label for="juzSelect">
-        <strong>Select Scope:</strong>
-      </label>
+      <label for="juzSelect"><strong>Select Scope:</strong></label>
 
       <select id="juzSelect">
         <option value="all">All Juzuk (1–30)</option>
       </select>
 
       <div class="btn-group">
-        <button
-          type="button"
-          class="btn-primary"
-          id="generateButton"
-        >
+        <button type="button" class="btn-primary" id="generateButton">
           Generate Random Verse
         </button>
       </div>
@@ -268,67 +207,37 @@
 
     <div id="quizSection" class="hidden">
       <div class="meta-tag" id="meta"></div>
-
       <div id="arabicText" class="arabic"></div>
 
       <div id="mainTranslation" class="translation-text hidden"></div>
 
       <div>
-        <button
-          type="button"
-          id="btnAudioMain"
-          class="btn-audio"
-        >
+        <button type="button" id="btnAudioMain" class="btn-audio">
           ▶ Listen (Al-Hussary)
         </button>
-
-        <button
-          type="button"
-          id="translationMainButton"
-          class="btn-outline small-outline"
-        >
+        <button type="button" id="translationMainButton" class="btn-outline small-outline">
           Show / Hide English
         </button>
       </div>
 
       <audio id="audioMain" preload="none"></audio>
 
-      <button
-        type="button"
-        class="btn-success"
-        id="revealButton"
-      >
+      <button type="button" class="btn-success" id="revealButton">
         Reveal Next Verse
       </button>
 
       <div id="revealBox" class="reveal-box hidden">
-        <div
-          style="font-weight: bold; color: #009736; margin-bottom: 8px;"
-        >
+        <div style="font-weight: bold; color: #009736; margin-bottom: 8px;">
           Next Verse:
         </div>
-
         <div id="nextVerse" class="arabic"></div>
-
-        <div
-          id="nextTranslation"
-          class="translation-text hidden"
-        ></div>
+        <div id="nextTranslation" class="translation-text hidden"></div>
 
         <div>
-          <button
-            type="button"
-            id="btnAudioNext"
-            class="btn-audio"
-          >
+          <button type="button" id="btnAudioNext" class="btn-audio">
             ▶ Listen Next Verse
           </button>
-
-          <button
-            type="button"
-            id="translationNextButton"
-            class="btn-outline small-outline"
-          >
+          <button type="button" id="translationNextButton" class="btn-outline small-outline">
             Show / Hide English
           </button>
         </div>
@@ -340,8 +249,7 @@
 
   <script>
     const API_BASE = "https://api.quran.com/api/v4";
-    const TRANSLATION_ID = 131; // Dr. Mustafa Khattab, the Clear Quran
-    const FORMSPREE_ENDPOINT = "https://formsubmit.co/ajax/el/heviyu";
+    const TRANSLATION_ID = 131; // Dr. Mustafa Khattab
 
     const juzSelect = document.getElementById("juzSelect");
     const generateButton = document.getElementById("generateButton");
@@ -354,7 +262,7 @@
     const meta = document.getElementById("meta");
     const arabicText = document.getElementById("arabicText");
     const mainTranslation = document.getElementById("mainTranslation");
-    const nextVerse = document.getElementById("nextVerse");
+    const nextVerseEl = document.getElementById("nextVerse");
     const nextTranslation = document.getElementById("nextTranslation");
 
     const audioMain = document.getElementById("audioMain");
@@ -363,11 +271,8 @@
     const btnAudioMain = document.getElementById("btnAudioMain");
     const btnAudioNext = document.getElementById("btnAudioNext");
 
-    const translationMainButton =
-      document.getElementById("translationMainButton");
-
-    const translationNextButton =
-      document.getElementById("translationNextButton");
+    const translationMainButton = document.getElementById("translationMainButton");
+    const translationNextButton = document.getElementById("translationNextButton");
 
     let currentSurah = null;
     let currentAyah = null;
@@ -381,20 +286,9 @@
     }
 
     async function fetchJson(url) {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Accept: "application/json"
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          `Request failed: ${response.status} ${response.statusText}`
-        );
-      }
-
-      return response.json();
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      return res.json();
     }
 
     function cleanHtml(text) {
@@ -410,20 +304,16 @@
     }
 
     function resetAudio() {
-      audioMain.pause();
-      audioNext.pause();
-      audioMain.currentTime = 0;
-      audioNext.currentTime = 0;
-      audioMain.removeAttribute("src");
-      audioNext.removeAttribute("src");
-      audioMain.load();
-      audioNext.load();
+      audioMain.pause(); audioNext.pause();
+      audioMain.currentTime = 0; audioNext.currentTime = 0;
+      audioMain.removeAttribute("src"); audioNext.removeAttribute("src");
+      audioMain.load(); audioNext.load();
       btnAudioMain.textContent = "▶ Listen (Al-Hussary)";
       btnAudioNext.textContent = "▶ Listen Next Verse";
     }
 
-    function showStatus(message, color = "#000000") {
-      status.textContent = message;
+    function showStatus(msg, color = "#000000") {
+      status.textContent = msg;
       status.style.color = color;
       status.classList.remove("hidden");
     }
@@ -433,212 +323,108 @@
     }
 
     async function getRandomVerseFromJuz(juzNumber) {
-      const firstPageUrl =
-        `${API_BASE}/verses/by_juz/${juzNumber}` +
-        "?page=1" +
-        "&per_page=50" +
-        "&language=en" +
-        "&words=false";
+      const firstUrl =
+        `${API_BASE}/verses/by_juz/${juzNumber}?page=1&per_page=50&language=en&words=false`;
+      const first = await fetchJson(firstUrl);
+      const verses0 = first.verses || [];
+      if (!verses0.length) throw new Error(`No verses in Juz ${juzNumber}`);
 
-      const firstPage = await fetchJson(firstPageUrl);
-      const firstPageVerses = firstPage.verses || [];
+      const totalPages = Number((first.pagination || {}).total_pages || 1);
+      const randomPage = Math.floor(Math.random() * totalPages) + 1;
 
-      if (firstPageVerses.length === 0) {
-        throw new Error(`No verses found in Juz ${juzNumber}`);
-      }
-
-      const pagination = firstPage.pagination || {};
-      const totalPages = Number(pagination.total_pages || 1);
-
-      const randomPage =
-        Math.floor(Math.random() * totalPages) + 1;
-
-      let selectedPage = firstPage;
-
+      let pageData = first;
       if (randomPage !== 1) {
-        const pageUrl =
-          `${API_BASE}/verses/by_juz/${juzNumber}` +
-          `?page=${randomPage}` +
-          "&per_page=50" +
-          "&language=en" +
-          "&words=false";
-
-        selectedPage = await fetchJson(pageUrl);
+        const url =
+          `${API_BASE}/verses/by_juz/${juzNumber}?page=${randomPage}&per_page=50&language=en&words=false`;
+        pageData = await fetchJson(url);
       }
 
-      const verses = selectedPage.verses || [];
-
-      if (verses.length === 0) {
-        throw new Error("The selected Juz page contained no verses");
-      }
-
+      const verses = pageData.verses || [];
+      if (!verses.length) throw new Error("Empty page from Juz endpoint");
       return verses[Math.floor(Math.random() * verses.length)];
     }
 
     async function getRandomVerse() {
       const selectedJuz = juzSelect.value;
-
       if (selectedJuz === "all") {
-        const randomUrl =
-          `${API_BASE}/verses/random` +
-          "?language=en" +
-          "&words=false";
-
-        const data = await fetchJson(randomUrl);
-
-        if (!data.verse) {
-          throw new Error("Random verse was not returned");
-        }
-
+        const url = `${API_BASE}/verses/random?language=en&words=false`;
+        const data = await fetchJson(url);
+        if (!data.verse) throw new Error("No random verse returned");
         return data.verse;
       }
-
       return getRandomVerseFromJuz(Number(selectedJuz));
     }
 
-    // Get verse with Arabic text only
-    async function getVerseArabic(verseKey) {
-      const verseUrl =
-        `${API_BASE}/verses/by_key/` +
-        `${encodeURIComponent(verseKey)}` +
-        "?language=en" +
-        "&words=false" +
-        "&fields=text_uthmani";
-
-      const data = await fetchJson(verseUrl);
-
-      if (!data.verse) {
-        throw new Error(`Verse ${verseKey} was not returned`);
-      }
-
+    // Get verse with Arabic + translations in one call
+    async function getVerseWithTranslation(verseKey, resourceId = TRANSLATION_ID) {
+      const url =
+        `${API_BASE}/verses/by_key/${encodeURIComponent(verseKey)}` +
+        `?language=en&words=false&translations=${resourceId}&fields=text_uthmani`;
+      const data = await fetchJson(url);
+      if (!data.verse) throw new Error(`Verse ${verseKey} not returned`);
       return data.verse;
+      // Structure:
+      // verse.translations = [ { resource_id: 131, text: "..." } ]
     }
 
-    // Get translation for a specific verse and resource_id
-    async function getVerseTranslation(verseKey, resourceId = TRANSLATION_ID) {
-      const url =
-        `${API_BASE}/translations/` +
-        `${resourceId}` +
-        `?verse_key=${encodeURIComponent(verseKey)}` +
-        "&language=en";
-
-      const data = await fetchJson(url);
-
-      // Quran.com v4 returns: { translations: [ { text: "...", ... } ] }
-      const list = data.translations || [];
-
-      if (Array.isArray(list) && list.length > 0 && list[0].text) {
-        return cleanHtml(list[0].text);
+    function extractTranslationText(verseObj, resourceId = TRANSLATION_ID) {
+      const list = verseObj.translations || [];
+      const match = list.find(t => Number(t.resource_id) === resourceId && t.text);
+      if (match) return cleanHtml(match.text);
+      // Fallback: first non-empty translation
+      for (const t of list) {
+        if (t && t.text) return cleanHtml(t.text);
       }
-
       return null;
     }
 
     async function getSurahName(surahNumber) {
-      const chapterUrl =
-        `${API_BASE}/chapters/${surahNumber}` +
-        "?language=en";
-
-      const data = await fetchJson(chapterUrl);
+      const url = `${API_BASE}/chapters/${surahNumber}?language=en`;
+      const data = await fetchJson(url);
       return data.chapter?.name_simple || `Surah ${surahNumber}`;
     }
 
     async function getNextVerseKey(surahNumber, ayahNumber) {
-      const chapterUrl =
-        `${API_BASE}/chapters/${surahNumber}` +
-        "?language=en";
-
-      const data = await fetchJson(chapterUrl);
-      const versesInSurah = Number(data.chapter?.verses_count);
-
-      if (
-        Number.isFinite(versesInSurah) &&
-        ayahNumber < versesInSurah
-      ) {
+      const url = `${API_BASE}/chapters/${surahNumber}?language=en`;
+      const data = await fetchJson(url);
+      const count = Number(data.chapter?.verses_count);
+      if (Number.isFinite(count) && ayahNumber < count) {
         return `${surahNumber}:${ayahNumber + 1}`;
       }
-
-      if (surahNumber < 114) {
-        return `${surahNumber + 1}:1`;
-      }
-
+      if (surahNumber < 114) return `${surahNumber + 1}:1`;
       return null;
-    }
-
-    async function reportErrorToFormspree(error, context = {}) {
-      const payload = {
-        error_message: error instanceof Error
-          ? error.message
-          : String(error),
-        error_stack: error instanceof Error && error.stack
-          ? error.stack
-          : "",
-        user_agent: navigator.userAgent,
-        url: window.location.href,
-        timestamp: new Date().toISOString(),
-        ...context
-      };
-
-      try {
-        await fetch(FORMSPREE_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-      } catch (formError) {
-        console.error("Formspree error report failed:", formError);
-      }
     }
 
     async function generateRandomAyah() {
       resetAudio();
-
       quizSection.classList.add("hidden");
       revealBox.classList.add("hidden");
-
       mainTranslation.classList.add("hidden");
       nextTranslation.classList.add("hidden");
 
       arabicText.textContent = "";
-      nextVerse.textContent = "";
+      nextVerseEl.textContent = "";
       meta.textContent = "";
 
       showStatus("Generating Ayah...");
-
       generateButton.disabled = true;
       generateButton.textContent = "Loading...";
 
       try {
         const selectedVerse = await getRandomVerse();
-
-        if (!selectedVerse.verse_key) {
-          throw new Error("The API returned an invalid verse key");
-        }
+        if (!selectedVerse.verse_key) throw new Error("Invalid verse_key from API");
 
         const verseKey = selectedVerse.verse_key;
-        const [surahNumber, ayahNumber] = verseKey
-          .split(":")
-          .map(Number);
+        const [s, a] = verseKey.split(":").map(Number);
+        currentSurah = s;
+        currentAyah = a;
 
-        currentSurah = surahNumber;
-        currentAyah = ayahNumber;
-
-        // Get Arabic text
-        const verse = await getVerseArabic(verseKey);
+        const verse = await getVerseWithTranslation(verseKey, TRANSLATION_ID);
         const surahName = await getSurahName(currentSurah);
+        const translation = extractTranslationText(verse, TRANSLATION_ID);
 
-        // Get translation via dedicated translations endpoint
-        let translation = await getVerseTranslation(verseKey, TRANSLATION_ID);
-
-        meta.textContent =
-          `Surah ${surahName} ` +
-          `(${currentSurah}:${currentAyah})`;
-
-        arabicText.textContent =
-          verse.text_uthmani || "Arabic text unavailable.";
+        meta.textContent = `Surah ${surahName} (${currentSurah}:${currentAyah})`;
+        arabicText.textContent = verse.text_uthmani || "Arabic text unavailable.";
 
         if (translation) {
           mainTranslation.textContent = `"${translation}"`;
@@ -649,22 +435,12 @@
         }
 
         audioMain.src = getAudioUrl(currentSurah, currentAyah);
-
         hideStatus();
         quizSection.classList.remove("hidden");
 
-      } catch (error) {
-        console.error("Generate error:", error);
-
-        await reportErrorToFormspree(error, {
-          selected_juz: juzSelect.value,
-          stage: "generateRandomAyah"
-        });
-
-        showStatus(
-          "Connection error. An error report has been sent. Please try again.",
-          "#EE2A35"
-        );
+      } catch (err) {
+        console.error("Generate error:", err);
+        showStatus("Connection error. Please check your internet and try again.", "#EE2A35");
       } finally {
         generateButton.disabled = false;
         generateButton.textContent = "Generate Random Verse";
@@ -672,9 +448,7 @@
     }
 
     async function revealNextAyah() {
-      if (currentSurah === null || currentAyah === null) {
-        return;
-      }
+      if (currentSurah === null || currentAyah === null) return;
 
       revealButton.disabled = true;
       revealButton.textContent = "Loading...";
@@ -683,30 +457,22 @@
       audioNext.currentTime = 0;
       audioNext.removeAttribute("src");
       audioNext.load();
-
       btnAudioNext.textContent = "▶ Listen Next Verse";
       nextTranslation.classList.add("hidden");
-
-      nextVerse.textContent = "Fetching next verse...";
+      nextVerseEl.textContent = "Fetching next verse...";
       revealBox.classList.remove("hidden");
 
       try {
-        const nextVerseKey = await getNextVerseKey(
-          currentSurah,
-          currentAyah
-        );
-
-        if (!nextVerseKey) {
-          nextVerse.textContent = "End of the Quran reached.";
+        const nextKey = await getNextVerseKey(currentSurah, currentAyah);
+        if (!nextKey) {
+          nextVerseEl.textContent = "End of the Quran reached.";
           return;
         }
 
-        const verse = await getVerseArabic(nextVerseKey);
-        const translation = await getVerseTranslation(nextVerseKey, TRANSLATION_ID);
+        const verse = await getVerseWithTranslation(nextKey, TRANSLATION_ID);
+        const translation = extractTranslationText(verse, TRANSLATION_ID);
 
-        nextVerse.textContent =
-          verse.text_uthmani || "Arabic text unavailable.";
-
+        nextVerseEl.textContent = verse.text_uthmani || "Arabic text unavailable.";
         if (translation) {
           nextTranslation.textContent = `"${translation}"`;
           nextTranslation.classList.remove("hidden");
@@ -715,25 +481,15 @@
           nextTranslation.classList.remove("hidden");
         }
 
-        const [nextSurahNumber, nextAyahNumber] =
-          nextVerseKey.split(":").map(Number);
+        const [ns, na] = nextKey.split(":").map(Number);
+        audioNext.src = getAudioUrl(ns, na);
 
-        audioNext.src = getAudioUrl(nextSurahNumber, nextAyahNumber);
+        currentSurah = ns;
+        currentAyah = na;
 
-        currentSurah = nextSurahNumber;
-        currentAyah = nextAyahNumber;
-
-      } catch (error) {
-        console.error("Reveal error:", error);
-
-        await reportErrorToFormspree(error, {
-          current_surah: currentSurah,
-          current_ayah: currentAyah,
-          stage: "revealNextAyah"
-        });
-
-        nextVerse.textContent =
-          "Unable to load the next verse. An error report has been sent.";
+      } catch (err) {
+        console.error("Reveal error:", err);
+        nextVerseEl.textContent = "Unable to load the next verse. Please try again.";
       } finally {
         revealButton.disabled = false;
         revealButton.textContent = "Reveal Next Verse";
@@ -742,71 +498,39 @@
 
     function playAudio(type) {
       const player = type === "main" ? audioMain : audioNext;
-      const button = type === "main" ? btnAudioMain : btnAudioNext;
-
+      const btn = type === "main" ? btnAudioMain : btnAudioNext;
       if (!player.src) {
         alert("Audio source is not available yet.");
         return;
       }
-
       if (!player.paused) {
         player.pause();
-        button.textContent =
-          type === "main"
-            ? "▶ Listen (Al-Hussary)"
-            : "▶ Listen Next Verse";
+        btn.textContent = type === "main" ? "▶ Listen (Al-Hussary)" : "▶ Listen Next Verse";
         return;
       }
-
-      player
-        .play()
-        .then(() => {
-          button.textContent = "⏸ Pause Audio";
-        })
-        .catch(error => {
-          console.error("Audio playback error:", error);
-          alert(
-            "Audio playback was blocked. Please tap the button again."
-          );
+      player.play()
+        .then(() => { btn.textContent = "⏸ Pause Audio"; })
+        .catch(err => {
+          console.error("Audio error:", err);
+          alert("Audio playback was blocked. Please tap the button again.");
         });
     }
 
     function toggleTranslation(type) {
-      const element =
-        type === "main" ? mainTranslation : nextTranslation;
-      element.classList.toggle("hidden");
+      const el = type === "main" ? mainTranslation : nextTranslation;
+      el.classList.toggle("hidden");
     }
 
-    audioMain.addEventListener("ended", () => {
-      btnAudioMain.textContent = "▶ Listen (Al-Hussary)";
-    });
-
-    audioNext.addEventListener("ended", () => {
-      btnAudioNext.textContent = "▶ Listen Next Verse";
-    });
+    audioMain.addEventListener("ended", () => { btnAudioMain.textContent = "▶ Listen (Al-Hussary)"; });
+    audioNext.addEventListener("ended", () => { btnAudioNext.textContent = "▶ Listen Next Verse"; });
 
     generateButton.addEventListener("click", generateRandomAyah);
     revealButton.addEventListener("click", revealNextAyah);
 
-    document
-      .getElementById("btnAudioMain")
-      .addEventListener("click", () => {
-        playAudio("main");
-      });
-
-    document
-      .getElementById("btnAudioNext")
-      .addEventListener("click", () => {
-        playAudio("next");
-      });
-
-    translationMainButton.addEventListener("click", () => {
-      toggleTranslation("main");
-    });
-
-    translationNextButton.addEventListener("click", () => {
-      toggleTranslation("next");
-    });
+    document.getElementById("btnAudioMain").addEventListener("click", () => playAudio("main"));
+    document.getElementById("btnAudioNext").addEventListener("click", () => playAudio("next"));
+    translationMainButton.addEventListener("click", () => toggleTranslation("main"));
+    translationNextButton.addEventListener("click", () => toggleTranslation("next"));
   </script>
 </body>
 </html>
