@@ -10,13 +10,13 @@
   <meta name="description" content="Waseel is a minimal random Quran Ayah generator designed to test your Hifz memory recall by Juzuk.">
   <meta name="keywords" content="Waseel, Waseel Quran, Quran memory tester, random ayah generator, test hifz, Juzuk tester">
 
-  <!-- Option 2: Embedded SVG Favicon (No external image file needed) -->
+  <!-- Option 2: Embedded SVG Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 88 C20 65 5 45 5 28 A22 22 0 0 1 45 15 L50 22 L55 15 A22 22 0 0 1 95 28 C95 45 80 65 50 88 Z' fill='%23000000'/><path d='M5 28 C5 15 20 8 35 12 L50 22 L65 12 C80 8 95 15 95 28 C95 38 87 50 72 61 L50 48 L5 28 Z' fill='%23FFFFFF'/><path d='M50 48 L72 61 C57 73 38 82 50 88 C20 65 5 45 5 28 L50 48 Z' fill='%23009736'/><path d='M5 28 L50 50 L5 72 Z' fill='%23EE2A35'/></svg>">
 
-  <!-- Inline Web App Manifest for "Add to Home Screen" & PWA compliance -->
+  <!-- Inline Web App Manifest for "Add to Home Screen" -->
   <link rel="manifest" href='data:application/manifest+json,{"name":"Waseel Quran Tester","short_name":"Waseel","start_url":".","display":"standalone","background_color":"#FFFFFF","theme_color":"#EE2A35","icons":[{"src":"data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><path d=\"M50 88 C20 65 5 45 5 28 A22 22 0 0 1 45 15 L50 22 L55 15 A22 22 0 0 1 95 28 C95 45 80 65 50 88 Z\" fill=\"%23000000\"/><path d=\"M5 28 C5 15 20 8 35 12 L50 22 L65 12 C80 8 95 15 95 28 C95 38 87 50 72 61 L50 48 L5 28 Z\" fill=\"%23FFFFFF\"/><path d=\"M50 48 L72 61 C57 73 38 82 50 88 C20 65 5 45 5 28 L50 48 Z\" fill=\"%23009736\"/><path d=\"M5 28 L50 50 L5 72 Z\" fill=\"%23EE2A35\"/></svg>","sizes":"512x512","type":"image/svg+xml"}]}'>
 
-  <!-- Dedicated Amiri Quran Font for Uthmani Script -->
+  <!-- Dedicated Amiri Quran Font -->
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 
   <style>
@@ -37,11 +37,7 @@
       border: 2px solid #000000;
       box-shadow: 0 8px 0px #000000;
     }
-    h2 { 
-      color: #000000; 
-      margin-top: 0;
-      font-weight: 800;
-    }
+    h2 { color: #000000; margin-top: 0; font-weight: 800; }
     .controls {
       margin-bottom: 25px;
       display: flex;
@@ -62,12 +58,7 @@
       width: 100%;
       max-width: 250px;
     }
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
     .btn-primary {
       padding: 14px 24px;
       font-size: 16px;
@@ -80,7 +71,6 @@
       transition: transform 0.1s;
     }
     .btn-primary:active { transform: translateY(2px); }
-
     .btn-success {
       padding: 12px 24px;
       font-size: 16px;
@@ -92,7 +82,6 @@
       color: #FFFFFF;
       margin-top: 15px;
     }
-
     .btn-outline {
       padding: 14px 20px;
       font-size: 15px;
@@ -103,7 +92,6 @@
       background-color: #FFFFFF;
       color: #000000;
     }
-
     .btn-audio {
       background-color: #000000;
       color: #FFFFFF;
@@ -118,7 +106,6 @@
       align-items: center;
       gap: 6px;
     }
-
     .arabic {
       font-size: 34px;
       font-family: 'Amiri Quran', serif;
@@ -128,7 +115,6 @@
       color: #000000;
       word-spacing: 4px;
     }
-
     .translation-text {
       font-size: 15px;
       font-style: italic;
@@ -139,7 +125,6 @@
       border-radius: 8px;
       border: 1px dashed #d1d5db;
     }
-
     .meta-tag {
       display: inline-block;
       background-color: #000000;
@@ -149,17 +134,9 @@
       font-weight: 700;
       font-size: 14px;
     }
-    .reveal-box {
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 2px solid #000000;
-    }
-    .status-msg {
-      font-weight: 600;
-      margin: 15px 0;
-      color: #EE2A35;
-    }
-    .hidden { display: none; }
+    .reveal-box { margin-top: 20px; padding-top: 20px; border-top: 2px solid #000000; }
+    .status-msg { font-weight: 600; margin: 15px 0; color: #EE2A35; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -188,11 +165,12 @@
       <div id="mainTranslation" class="translation-text hidden"></div>
 
       <div>
-        <button class="btn-audio" onclick="playAudio('main')">▶ Listen (Al-Hussary)</button>
+        <button id="btnAudioMain" class="btn-audio" onclick="playAudio('main')">▶ Listen (Al-Hussary)</button>
         <button class="btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="toggleTranslation('main')">Show / Hide English</button>
       </div>
 
-      <audio id="audioMain" class="hidden"></audio>
+      <!-- Native HTML Audio Elements with preload -->
+      <audio id="audioMain" preload="auto"></audio>
       
       <button class="btn-success" onclick="revealNextAyah()">Reveal Next Verse</button>
       
@@ -202,17 +180,16 @@
         <div id="nextTranslation" class="translation-text hidden"></div>
         
         <div>
-          <button class="btn-audio" onclick="playAudio('next')">▶ Listen Next Verse</button>
+          <button id="btnAudioNext" class="btn-audio" onclick="playAudio('next')">▶ Listen Next Verse</button>
           <button class="btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="toggleTranslation('next')">Show / Hide English</button>
         </div>
 
-        <audio id="audioNext" class="hidden"></audio>
+        <audio id="audioNext" preload="auto"></audio>
       </div>
     </div>
   </div>
 
   <script>
-    // Register Service Worker for PWA compliance & "Add to Home Screen"
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         const swCode = `self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));`;
@@ -221,7 +198,6 @@
       });
     }
 
-    // Populate Juzuk dropdown (1 to 30)
     const juzSelect = document.getElementById('juzSelect');
     for (let i = 1; i <= 30; i++) {
       const opt = document.createElement('option');
@@ -241,7 +217,6 @@
       const audioMain = document.getElementById('audioMain');
       const mainTrans = document.getElementById('mainTranslation');
 
-      // Reset state and stop audio
       audioMain.pause();
       document.getElementById('audioNext').pause();
       quizSection.classList.add('hidden');
@@ -256,7 +231,6 @@
       try {
         let ayahData;
 
-        // Fetch Uthmani text edition
         if (selectedJuz === 'all') {
           const res = await fetch('https://api.alquran.cloud/v1/ayah/random/quran-uthmani-quran-academy');
           const data = await res.json();
@@ -272,14 +246,15 @@
         currentSurah = ayahData.surah.number;
         currentAyah = ayahData.numberInSurah;
 
-        // Fetch audio stream URL for Sheikh Mahmoud Khalil Al-Hussary (ar.hussary)
+        // Force HTTPS audio URL to bypass mixed-content security blocks
         const audioRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${currentAyah}/ar.hussary`);
         const audioData = await audioRes.json();
         if (audioData.code === 200) {
-          audioMain.src = audioData.data.audio;
+          let secureAudioUrl = audioData.data.audio.replace('http://', 'https://');
+          audioMain.src = secureAudioUrl;
+          audioMain.load();
         }
 
-        // Fetch English Translation (en.sahih - Saheeh International)
         const transRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${currentAyah}/en.sahih`);
         const transData = await transRes.json();
         if (transData.code === 200) {
@@ -311,21 +286,20 @@
       revealBox.classList.remove('hidden');
 
       try {
-        // Fetch next verse text
         const res = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/quran-uthmani-quran-academy`);
         const data = await res.json();
         
         if (data.code === 200) {
           nextVerseDiv.innerText = data.data.text;
           
-          // Fetch next verse audio for Al-Hussary
           const audioRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/ar.hussary`);
           const audioData = await audioRes.json();
           if (audioData.code === 200) {
-            audioNext.src = audioData.data.audio;
+            let secureAudioUrl = audioData.data.audio.replace('http://', 'https://');
+            audioNext.src = secureAudioUrl;
+            audioNext.load();
           }
 
-          // Fetch next verse English translation
           const transRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/en.sahih`);
           const transData = await transRes.json();
           if (transData.code === 200) {
@@ -341,9 +315,24 @@
 
     function playAudio(type) {
       const player = type === 'main' ? document.getElementById('audioMain') : document.getElementById('audioNext');
+      const btn = type === 'main' ? document.getElementById('btnAudioMain') : document.getElementById('btnAudioNext');
+      
       if (player && player.src) {
-        player.play();
+        if (!player.paused) {
+          player.pause();
+          btn.innerText = type === 'main' ? '▶ Listen (Al-Hussary)' : '▶ Listen Next Verse';
+        } else {
+          player.play().then(() => {
+            btn.innerText = '⏸ Pause Audio';
+          }).catch(e => {
+            alert("Audio playback failed. Please tap 'Generate Random Verse' and try clicking play again.");
+          });
+        }
       }
+      
+      player.onended = () => {
+        btn.innerText = type === 'main' ? '▶ Listen (Al-Hussary)' : '▶ Listen Next Verse';
+      };
     }
 
     function toggleTranslation(type) {
@@ -351,7 +340,6 @@
       target.classList.toggle('hidden');
     }
 
-    // Web Share API implementation for nearby device sharing
     async function shareWebsite() {
       if (navigator.share) {
         try {
