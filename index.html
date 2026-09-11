@@ -482,8 +482,7 @@
         const randomUrl =
           `${API_BASE}/verses/random` +
           "?language=en" +
-          "&words=false" +
-          `&translations=${TRANSLATION_ID}`;
+          "&words=false";
 
         const data = await fetchJson(randomUrl);
 
@@ -497,13 +496,13 @@
       return getRandomVerseFromJuz(Number(selectedJuz));
     }
 
-    async function getVerseDetails(verseKey) {
+    // Get verse with Arabic text only
+    async function getVerseArabic(verseKey) {
       const verseUrl =
         `${API_BASE}/verses/by_key/` +
         `${encodeURIComponent(verseKey)}` +
         "?language=en" +
         "&words=false" +
-        `&translations=${TRANSLATION_ID}` +
         "&fields=text_uthmani";
 
       const data = await fetchJson(verseUrl);
@@ -515,6 +514,26 @@
       return data.verse;
     }
 
+    // Get translation for a specific verse and resource_id
+    async function getVerseTranslation(verseKey, resourceId = TRANSLATION_ID) {
+      const url =
+        `${API_BASE}/translations/` +
+        `${resourceId}` +
+        `?verse_key=${encodeURIComponent(verseKey)}` +
+        "&language=en";
+
+      const data = await fetchJson(url);
+
+      // Quran.com v4 returns: { translations: [ { text: "...", ... } ] }
+      const list = data.translations || [];
+
+      if (Array.isArray(list) && list.length > 0 && list[0].text) {
+        return cleanHtml(list[0].text);
+      }
+
+      return null;
+    }
+
     async function getSurahName(surahNumber) {
       const chapterUrl =
         `${API_BASE}/chapters/${surahNumber}` +
@@ -522,41 +541,6 @@
 
       const data = await fetchJson(chapterUrl);
       return data.chapter?.name_simple || `Surah ${surahNumber}`;
-    }
-
-    function extractTranslation(verseObject) {
-      // Debug: inspect this in browser console
-      console.log("Full verse object:", verseObject);
-
-      // Some endpoints nest translations under "translations" array
-      const translations = verseObject.translations || [];
-
-      if (Array.isArray(translations) && translations.length > 0) {
-        // Try the specific translation ID first
-        const match = translations.find(
-          t => t && Number(t.resource_id) === TRANSLATION_ID && t.text
-        );
-
-        if (match && match.text) {
-          return cleanHtml(match.text);
-        }
-
-        // Fallback: first non-empty translation
-        for (const t of translations) {
-          if (t && t.text) {
-            return cleanHtml(t.text);
-          }
-        }
-      }
-
-      // Some responses put translations directly as verse.translations[0].text
-      // or verseObj.translations might be an object in some custom wrappers.
-      // As a last resort, if someone wraps the API, check common shapes:
-      if (verseObject.translation && typeof verseObject.translation === "string") {
-        return cleanHtml(verseObject.translation);
-      }
-
-      return null;
     }
 
     async function getNextVerseKey(surahNumber, ayahNumber) {
@@ -642,10 +626,12 @@
         currentSurah = surahNumber;
         currentAyah = ayahNumber;
 
-        const verse = await getVerseDetails(verseKey);
+        // Get Arabic text
+        const verse = await getVerseArabic(verseKey);
         const surahName = await getSurahName(currentSurah);
 
-        const translation = extractTranslation(verse);
+        // Get translation via dedicated translations endpoint
+        let translation = await getVerseTranslation(verseKey, TRANSLATION_ID);
 
         meta.textContent =
           `Surah ${surahName} ` +
@@ -715,9 +701,8 @@
           return;
         }
 
-        const verse = await getVerseDetails(nextVerseKey);
-
-        const translation = extractTranslation(verse);
+        const verse = await getVerseArabic(nextVerseKey);
+        const translation = await getVerseTranslation(nextVerseKey, TRANSLATION_ID);
 
         nextVerse.textContent =
           verse.text_uthmani || "Arabic text unavailable.";
