@@ -5,16 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#EE2A35">
   
+  <!-- SEO & PWA Meta Tags -->
   <title>Waseel • Quran Memory Tester</title>
   <meta name="description" content="Waseel is a minimal random Quran Ayah generator designed to test your Hifz memory recall by Juzuk.">
   <meta name="keywords" content="Waseel, Waseel Quran, Quran memory tester, random ayah generator, test hifz, Juzuk tester">
 
-  <!-- Embedded SVG Favicon -->
+  <!-- Option 2: Embedded SVG Favicon (No external image file needed) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 88 C20 65 5 45 5 28 A22 22 0 0 1 45 15 L50 22 L55 15 A22 22 0 0 1 95 28 C95 45 80 65 50 88 Z' fill='%23000000'/><path d='M5 28 C5 15 20 8 35 12 L50 22 L65 12 C80 8 95 15 95 28 C95 38 87 50 72 61 L50 48 L5 28 Z' fill='%23FFFFFF'/><path d='M50 48 L72 61 C57 73 38 82 50 88 C20 65 5 45 5 28 L50 48 Z' fill='%23009736'/><path d='M5 28 L50 50 L5 72 Z' fill='%23EE2A35'/></svg>">
 
-  <!-- Web App Manifest -->
-  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Waseel%20Quran%20Tester%22%2C%22short_name%22%3A%22Waseel%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FFFFFF%22%2C%22theme_color%22%3A%22%23EE2A35%22%7D">
+  <!-- Inline Web App Manifest for "Add to Home Screen" & PWA compliance -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Waseel Quran Tester","short_name":"Waseel","start_url":".","display":"standalone","background_color":"#FFFFFF","theme_color":"#EE2A35","icons":[{"src":"data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><path d=\"M50 88 C20 65 5 45 5 28 A22 22 0 0 1 45 15 L50 22 L55 15 A22 22 0 0 1 95 28 C95 45 80 65 50 88 Z\" fill=\"%23000000\"/><path d=\"M5 28 C5 15 20 8 35 12 L50 22 L65 12 C80 8 95 15 95 28 C95 38 87 50 72 61 L50 48 L5 28 Z\" fill=\"%23FFFFFF\"/><path d=\"M50 48 L72 61 C57 73 38 82 50 88 C20 65 5 45 5 28 L50 48 Z\" fill=\"%23009736\"/><path d=\"M5 28 L50 50 L5 72 Z\" fill=\"%23EE2A35\"/></svg>","sizes":"512x512","type":"image/svg+xml"}]}'>
 
+  <!-- Dedicated Amiri Quran Font for Uthmani Script -->
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 
   <style>
@@ -35,7 +37,11 @@
       border: 2px solid #000000;
       box-shadow: 0 8px 0px #000000;
     }
-    h2 { color: #000000; margin-top: 0; font-weight: 800; }
+    h2 { 
+      color: #000000; 
+      margin-top: 0;
+      font-weight: 800;
+    }
     .controls {
       margin-bottom: 25px;
       display: flex;
@@ -56,7 +62,12 @@
       width: 100%;
       max-width: 250px;
     }
-    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
     .btn-primary {
       padding: 14px 24px;
       font-size: 16px;
@@ -69,6 +80,7 @@
       transition: transform 0.1s;
     }
     .btn-primary:active { transform: translateY(2px); }
+
     .btn-success {
       padding: 12px 24px;
       font-size: 16px;
@@ -80,6 +92,7 @@
       color: #FFFFFF;
       margin-top: 15px;
     }
+
     .btn-outline {
       padding: 14px 20px;
       font-size: 15px;
@@ -90,6 +103,22 @@
       background-color: #FFFFFF;
       color: #000000;
     }
+
+    .btn-audio {
+      background-color: #000000;
+      color: #FFFFFF;
+      border: 2px solid #000000;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .arabic {
       font-size: 34px;
       font-family: 'Amiri Quran', serif;
@@ -99,6 +128,7 @@
       color: #000000;
       word-spacing: 4px;
     }
+
     .translation-text {
       font-size: 15px;
       font-style: italic;
@@ -109,6 +139,7 @@
       border-radius: 8px;
       border: 1px dashed #d1d5db;
     }
+
     .meta-tag {
       display: inline-block;
       background-color: #000000;
@@ -118,9 +149,17 @@
       font-weight: 700;
       font-size: 14px;
     }
-    .reveal-box { margin-top: 20px; padding-top: 20px; border-top: 2px solid #000000; }
-    .status-msg { font-weight: 600; margin: 15px 0; color: #EE2A35; }
-    .hidden { display: none !important; }
+    .reveal-box {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #000000;
+    }
+    .status-msg {
+      font-weight: 600;
+      margin: 15px 0;
+      color: #EE2A35;
+    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
@@ -149,8 +188,11 @@
       <div id="mainTranslation" class="translation-text hidden"></div>
 
       <div>
+        <button class="btn-audio" onclick="playAudio('main')">▶ Listen (Al-Hussary)</button>
         <button class="btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="toggleTranslation('main')">Show / Hide English</button>
       </div>
+
+      <audio id="audioMain" class="hidden"></audio>
       
       <button class="btn-success" onclick="revealNextAyah()">Reveal Next Verse</button>
       
@@ -160,26 +202,26 @@
         <div id="nextTranslation" class="translation-text hidden"></div>
         
         <div>
+          <button class="btn-audio" onclick="playAudio('next')">▶ Listen Next Verse</button>
           <button class="btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="toggleTranslation('next')">Show / Hide English</button>
         </div>
+
+        <audio id="audioNext" class="hidden"></audio>
       </div>
     </div>
   </div>
 
   <script>
-    // FormSubmit Telemetry Endpoint
-    const FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/el/heviyu";
+    // Register Service Worker for PWA compliance & "Add to Home Screen"
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        const swCode = `self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));`;
+        const blob = new Blob([swCode], { type: 'text/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+      });
+    }
 
-    // Local embedded dataset (Guarantees zero network issues)
-    const AYAH_DATABASE = [
-      { juz: 1, surah: "Al-Fatiha", surahNum: 1, ayahNum: 1, text: "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ", trans: "In the name of Allah, the Entirely Merciful, the Especially Merciful.", nextText: "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ", nextTrans: "[All] praise is due to Allah, Lord of the worlds -" },
-      { juz: 1, surah: "Al-Baqarah", surahNum: 2, ayahNum: 255, text: "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ۠ وَلَا نَوْمٌ۠", trans: "Allah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep.", nextText: "لَّآ إِكْرَاهَ فِى ٱلدِّينِ ۖ قَد تَّبَيَّنَ ٱلرُّشْدُ مِنَ ٱلْغَىِّ ۚ", nextTrans: "There shall be no compulsion in [acceptance of] the religion. The right course has become clear from the wrong." },
-      { juz: 28, surah: "Al-Mujadila", surahNum: 58, ayahNum: 1, text: "قَدْ سَمِعَ ٱللَّهُ قَوْلَ ٱلَّتِى تُجَـٰدِلُكَ فِى زَوْجِهَا وَتَشْتَكِىٓ إِلَى ٱللَّهِ", trans: "Allah has certainly heard the speech of the one who argues with you concerning her husband and directs her complaint to Allah.", nextText: "ٱلَّذِينَ يُظَـٰهِرُونَ مِنكُم مِّن نِّسَآئِهِم مَّا هُنَّ أُمَّهَـٰتِهِمْ ۖ", nextTrans: "Those who pronounce zihar among you to separate from their wives - they are not or cannot be their mothers." },
-      { juz: 29, surah: "Al-Mulk", surahNum: 67, ayahNum: 1, text: "تَبَـٰرَكَ ٱلَّذِى بِيَدِهِ ٱلْمُلْكُ وَهُوَ عَلَىٰ كُلِّ شَىْءٍ قَدِيرٌ", trans: "Blessed is He in whose hand is dominion, and He is over all things competent -", nextText: "ٱلَّذِى خَلَقَ ٱلْمَوْتَ وَٱلْحَيَوٰةَ لِيَبْلُوَكُمْ أَيُّكُمْ أَحْسَنُ عَمَلً۠ا ۚ", nextTrans: "[He] who created death and life to test you as to which of you is best in deed -" },
-      { juz: 30, surah: "An-Naba", surahNum: 78, ayahNum: 1, text: "عَمَّ يَتَسَآءَلُونَ", trans: "About what are they asking one another?", nextText: "عَنِ ٱلنَّبَإِ ٱلْعَظِيمِ", nextTrans: "About the great news -" },
-      { juz: 30, surah: "Al-Ikhlas", surahNum: 112, ayahNum: 1, text: "قُلْ هُوَ ٱللَّهُ أَحَدٌ", trans: "Say, \"He is Allah, [who is] One,", nextText: "ٱللَّهُ ٱلصَّمَدُ", nextTrans: "Allah, the Eternal Refuge." }
-    ];
-
+    // Populate Juzuk dropdown (1 to 30)
     const juzSelect = document.getElementById('juzSelect');
     for (let i = 1; i <= 30; i++) {
       const opt = document.createElement('option');
@@ -188,71 +230,119 @@
       juzSelect.appendChild(opt);
     }
 
-    let currentItem = null;
+    let currentSurah = null;
+    let currentAyah = null;
 
-    // Automated error alert trigger
-    async function sendErrorLog(errorMessage) {
-      try {
-        await fetch(FORMSUBMIT_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            subject: 'Waseel App Telemetry: Error Detected',
-            timestamp: new Date().toISOString(),
-            error: errorMessage,
-            user_agent: navigator.userAgent
-          })
-        });
-      } catch (e) {}
-    }
-
-    function generateRandomAyah() {
+    async function generateRandomAyah() {
       const selectedJuz = juzSelect.value;
       const quizSection = document.getElementById('quizSection');
       const revealBox = document.getElementById('revealBox');
       const status = document.getElementById('status');
+      const audioMain = document.getElementById('audioMain');
       const mainTrans = document.getElementById('mainTranslation');
 
-      try {
-        revealBox.classList.add('hidden');
-        mainTrans.classList.add('hidden');
-        document.getElementById('nextTranslation').classList.add('hidden');
-        document.getElementById('nextVerse').innerText = '';
-        status.classList.add('hidden');
+      // Reset state and stop audio
+      audioMain.pause();
+      document.getElementById('audioNext').pause();
+      quizSection.classList.add('hidden');
+      revealBox.classList.add('hidden');
+      mainTrans.classList.add('hidden');
+      document.getElementById('nextTranslation').classList.add('hidden');
+      document.getElementById('nextVerse').innerText = '';
+      status.innerText = "Generating Ayah...";
+      status.style.color = "#000000";
+      status.classList.remove('hidden');
 
-        let pool = AYAH_DATABASE;
-        if (selectedJuz !== 'all') {
-          pool = AYAH_DATABASE.filter(item => item.juz === parseInt(selectedJuz));
+      try {
+        let ayahData;
+
+        // Fetch Uthmani text edition
+        if (selectedJuz === 'all') {
+          const res = await fetch('https://api.alquran.cloud/v1/ayah/random/quran-uthmani-quran-academy');
+          const data = await res.json();
+          ayahData = data.data;
+        } else {
+          const res = await fetch(`https://api.alquran.cloud/v1/juz/${selectedJuz}/quran-uthmani-quran-academy`);
+          const data = await res.json();
+          const ayahsInJuz = data.data.ayahs;
+          const randomIndex = Math.floor(Math.random() * ayahsInJuz.length);
+          ayahData = ayahsInJuz[randomIndex];
         }
 
-        if (pool.length === 0) pool = AYAH_DATABASE;
+        currentSurah = ayahData.surah.number;
+        currentAyah = ayahData.numberInSurah;
 
-        currentItem = pool[Math.floor(Math.random() * pool.length)];
+        // Fetch audio stream URL for Sheikh Mahmoud Khalil Al-Hussary (ar.hussary)
+        const audioRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${currentAyah}/ar.hussary`);
+        const audioData = await audioRes.json();
+        if (audioData.code === 200) {
+          audioMain.src = audioData.data.audio;
+        }
 
-        document.getElementById('meta').innerText = `Surah ${currentItem.surah} (${currentItem.surahNum}:${currentItem.ayahNum}) • Juzuk ${currentItem.juz}`;
-        document.getElementById('arabicText').innerText = currentItem.text;
-        mainTrans.innerText = `"${currentItem.trans}"`;
+        // Fetch English Translation (en.sahih - Saheeh International)
+        const transRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${currentAyah}/en.sahih`);
+        const transData = await transRes.json();
+        if (transData.code === 200) {
+          mainTrans.innerText = `"${transData.data.text}"`;
+        }
 
+        document.getElementById('meta').innerText = `Surah ${ayahData.surah.englishName} (${currentSurah}:${currentAyah}) • Juzuk ${ayahData.juz}`;
+        document.getElementById('arabicText').innerText = ayahData.text;
+        
+        status.classList.add('hidden');
         quizSection.classList.remove('hidden');
 
       } catch (err) {
-        sendErrorLog(err.message);
-        status.innerText = "Error generating verse. Telemetry logged.";
-        status.classList.remove('hidden');
+        status.innerText = "Connection error. Please check your internet connection.";
+        status.style.color = "#EE2A35";
       }
     }
 
-    function revealNextAyah() {
-      try {
-        const revealBox = document.getElementById('revealBox');
-        const nextVerseDiv = document.getElementById('nextVerse');
-        const nextTrans = document.getElementById('nextTranslation');
+    async function revealNextAyah() {
+      const revealBox = document.getElementById('revealBox');
+      const nextVerseDiv = document.getElementById('nextVerse');
+      const nextTrans = document.getElementById('nextTranslation');
+      const audioNext = document.getElementById('audioNext');
+      const nextAyahNum = currentAyah + 1;
 
-        nextVerseDiv.innerText = currentItem.nextText;
-        nextTrans.innerText = `"${currentItem.nextTrans}"`;
-        revealBox.classList.remove('hidden');
+      audioNext.pause();
+      nextTrans.classList.add('hidden');
+      nextVerseDiv.innerText = "Fetching next verse...";
+      revealBox.classList.remove('hidden');
+
+      try {
+        // Fetch next verse text
+        const res = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/quran-uthmani-quran-academy`);
+        const data = await res.json();
+        
+        if (data.code === 200) {
+          nextVerseDiv.innerText = data.data.text;
+          
+          // Fetch next verse audio for Al-Hussary
+          const audioRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/ar.hussary`);
+          const audioData = await audioRes.json();
+          if (audioData.code === 200) {
+            audioNext.src = audioData.data.audio;
+          }
+
+          // Fetch next verse English translation
+          const transRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/en.sahih`);
+          const transData = await transRes.json();
+          if (transData.code === 200) {
+            nextTrans.innerText = `"${transData.data.text}"`;
+          }
+        } else {
+          nextVerseDiv.innerText = "End of Surah reached!";
+        }
       } catch (err) {
-        sendErrorLog(err.message);
+        nextVerseDiv.innerText = "Failed to load next verse.";
+      }
+    }
+
+    function playAudio(type) {
+      const player = type === 'main' ? document.getElementById('audioMain') : document.getElementById('audioNext');
+      if (player && player.src) {
+        player.play();
       }
     }
 
@@ -261,6 +351,7 @@
       target.classList.toggle('hidden');
     }
 
+    // Web Share API implementation for nearby device sharing
     async function shareWebsite() {
       if (navigator.share) {
         try {
@@ -269,7 +360,9 @@
             text: 'Practice and test your Quran memory with this random Ayah generator.',
             url: window.location.href
           });
-        } catch (err) {}
+        } catch (err) {
+          if (err.name !== 'AbortError') console.error('Share error:', err);
+        }
       } else {
         try {
           await navigator.clipboard.writeText(window.location.href);
