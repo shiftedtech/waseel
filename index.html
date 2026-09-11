@@ -167,7 +167,7 @@
         <button class="btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="toggleTranslation('main')">Show / Hide English</button>
       </div>
 
-      <audio id="audioMain" preload="none"></audio>
+      <audio id="audioMain"></audio>
       
       <button class="btn-success" onclick="revealNextAyah()">Reveal Next Verse</button>
       
@@ -181,7 +181,7 @@
           <button class="btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="toggleTranslation('next')">Show / Hide English</button>
         </div>
 
-        <audio id="audioNext" preload="none"></audio>
+        <audio id="audioNext"></audio>
       </div>
     </div>
   </div>
@@ -206,7 +206,7 @@
     let currentSurah = null;
     let currentAyah = null;
 
-    // Constructs reliable EveryAyah audio URLs formatted as SSSAAA.mp3
+    // Direct CDN source for Mahmoud Khalil Al-Hussary audio
     function getAudioUrl(surah, ayah) {
       const s = String(surah).padStart(3, '0');
       const a = String(ayah).padStart(3, '0');
@@ -221,8 +221,8 @@
       const audioMain = document.getElementById('audioMain');
       const mainTrans = document.getElementById('mainTranslation');
 
-      audioMain.removeAttribute('src');
-      document.getElementById('audioNext').removeAttribute('src');
+      audioMain.pause();
+      document.getElementById('audioNext').pause();
       document.getElementById('btnAudioMain').innerText = '▶ Listen (Al-Hussary)';
       document.getElementById('btnAudioNext').innerText = '▶ Listen Next Verse';
 
@@ -236,40 +236,49 @@
       status.classList.remove('hidden');
 
       try {
-        let ayahData;
+        let verseKey;
 
         if (selectedJuz === 'all') {
-          const res = await fetch('https://api.alquran.cloud/v1/ayah/random/quran-uthmani-quran-academy');
+          // Fetch random verse from Quran.com API v4
+          const res = await fetch('https://api.quran.com/api/v4/verses/random?language=en&words=false');
           const data = await res.json();
-          ayahData = data.data;
+          verseKey = data.verse.verse_key; // Format: "Surah:Ayah" e.g., "2:255"
         } else {
-          const res = await fetch(`https://api.alquran.cloud/v1/juz/${selectedJuz}/quran-uthmani-quran-academy`);
+          const res = await fetch(`https://api.quran.com/api/v4/verses/by_juz/${selectedJuz}?per_page=300`);
           const data = await res.json();
-          const ayahsInJuz = data.data.ayahs;
-          const randomIndex = Math.floor(Math.random() * ayahsInJuz.length);
-          ayahData = ayahsInJuz[randomIndex];
+          const verses = data.verses;
+          const randomVerse = verses[Math.floor(Math.random() * verses.length)];
+          verseKey = randomVerse.verse_key;
         }
 
-        currentSurah = ayahData.surah.number;
-        currentAyah = ayahData.numberInSurah;
+        const [sNum, aNum] = verseKey.split(':').map(Number);
+        currentSurah = sNum;
+        currentAyah = aNum;
 
-        // Set audio directly to EveryAyah CDN
+        // Fetch Arabic Uthmani text & English translation from Quran.com v4
+        const verseRes = await fetch(`https://api.quran.com/api/v4/verses/by_key/${verseKey}?language=en&words=false&translations=131&fields=text_uthmani`);
+        const verseData = await verseRes.json();
+        
+        const arabicText = verseData.verse.text_uthmani;
+        const translationText = verseData.verse.translations[0]?.text.replace(/<[^>]*>?/gm, '') || '';
+
+        // Fetch Surah metadata
+        const surahRes = await fetch(`https://api.quran.com/api/v4/chapters/${currentSurah}`);
+        const surahData = await surahRes.json();
+        const surahName = surahData.chapter.name_simple;
+
+        // Assign audio source
         audioMain.src = getAudioUrl(currentSurah, currentAyah);
 
-        const transRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${currentAyah}/en.sahih`);
-        const transData = await transRes.json();
-        if (transData.code === 200) {
-          mainTrans.innerText = `"${transData.data.text}"`;
-        }
-
-        document.getElementById('meta').innerText = `Surah ${ayahData.surah.englishName} (${currentSurah}:${currentAyah}) • Juzuk ${ayahData.juz}`;
-        document.getElementById('arabicText').innerText = ayahData.text;
+        document.getElementById('meta').innerText = `Surah ${surahName} (${currentSurah}:${currentAyah})`;
+        document.getElementById('arabicText').innerText = arabicText;
+        mainTrans.innerText = `"${translationText}"`;
         
         status.classList.add('hidden');
         quizSection.classList.remove('hidden');
 
       } catch (err) {
-        status.innerText = "Connection error. Please check your internet connection.";
+        status.innerText = "Connection error. Please check your network and try again.";
         status.style.color = "#EE2A35";
       }
     }
@@ -280,41 +289,36 @@
       const nextTrans = document.getElementById('nextTranslation');
       const audioNext = document.getElementById('audioNext');
       const nextAyahNum = currentAyah + 1;
+      const nextVerseKey = `${currentSurah}:${nextAyahNum}`;
 
-      audioNext.removeAttribute('src');
+      audioNext.pause();
       document.getElementById('btnAudioNext').innerText = '▶ Listen Next Verse';
       nextTrans.classList.add('hidden');
       nextVerseDiv.innerText = "Fetching next verse...";
       revealBox.classList.remove('hidden');
 
       try {
-        const res = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/quran-uthmani-quran-academy`);
-        const data = await res.json();
-        
-        if (data.code === 200) {
-          nextVerseDiv.innerText = data.data.text;
-          
-          audioNext.src = getAudioUrl(currentSurah, nextAyahNum);
+        const verseRes = await fetch(`https://api.quran.com/api/v4/verses/by_key/${nextVerseKey}?language=en&words=false&translations=131&fields=text_uthmani`);
+        const verseData = await verseRes.json();
 
-          const transRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/en.sahih`);
-          const transData = await transRes.json();
-          if (transData.code === 200) {
-            nextTrans.innerText = `"${transData.data.text}"`;
-          }
+        if (verseData.verse) {
+          nextVerseDiv.innerText = verseData.verse.text_uthmani;
+          nextTrans.innerText = `"${verseData.verse.translations[0]?.text.replace(/<[^>]*>?/gm, '') || ''}"`;
+          audioNext.src = getAudioUrl(currentSurah, nextAyahNum);
         } else {
           nextVerseDiv.innerText = "End of Surah reached!";
         }
       } catch (err) {
-        nextVerseDiv.innerText = "Failed to load next verse.";
+        nextVerseDiv.innerText = "End of Surah or verse not found.";
       }
     }
 
     function playAudio(type) {
       const player = type === 'main' ? document.getElementById('audioMain') : document.getElementById('audioNext');
       const btn = type === 'main' ? document.getElementById('btnAudioMain') : document.getElementById('btnAudioNext');
-      
-      if (!player.getAttribute('src')) {
-        alert("Audio source is still loading. Please try again in a moment.");
+
+      if (!player.src) {
+        alert("Audio source is loading. Please wait a moment.");
         return;
       }
 
@@ -324,8 +328,8 @@
       } else {
         player.play().then(() => {
           btn.innerText = '⏸ Pause Audio';
-        }).catch(e => {
-          alert("Playback failed. Please try clicking play again.");
+        }).catch(() => {
+          alert("Audio stream blocked by browser. Please tap again to start playback.");
         });
       }
 
