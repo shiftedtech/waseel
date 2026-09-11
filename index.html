@@ -9,7 +9,7 @@
   <meta name="description" content="Waseel is a minimal random Quran Ayah generator designed to test your Hifz memory recall by Juzuk.">
 
   <!-- Embedded SVG Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 88 C20 65 5 45 5 28 A22 22 0 0 1 45 15 L50 22 L55 15 A22 22 0 0 1 95 28 C95 45 80 65 50 88 Z' fill='%23000000'/><path d='M5 28 C5 15 20 8 35 12 L50 22 L65 12 C80 8 95 15 95 28 C95 38 87 50 72 61 L50 48 L5 28 Z' fill='%23FFFFFF'/><path d='M50 48 L72 61 C57 73 38 82 50 88 C20 65 5 45 5 28 L50 48 Z' fill='%23009736'/><path d='M5 28 L50 50 L5 72 Z' fill='%23EE2A35'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 88 C20 65 5 45 5 28 A22 22 0 0 1 45 15 L50 22 L55 15 A22 22 0 0 1 95 28 C95 45 80 65 50 88 Z' fill='%23000000'/><path d='M5 28 C5 15 20 8 35 12 L50 22 L65 12 C80 8 95 15 95 28 C95 38 87 50 72 61 L50 48 L5 28 Z' fill='%23FFFFFF'/><path d='M5 28 L50 50 L5 72 Z' fill='%23EE2A35'/></svg>">
 
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 
@@ -86,20 +86,6 @@
       background-color: #FFFFFF;
       color: #000000;
     }
-    .btn-audio {
-      background-color: #000000;
-      color: #FFFFFF;
-      border: 2px solid #000000;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      margin: 5px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
     .arabic {
       font-size: 32px;
       font-family: 'Amiri Quran', serif;
@@ -119,7 +105,6 @@
       font-size: 14px;
     }
     .reveal-box { margin-top: 20px; padding-top: 20px; border-top: 2px solid #000000; }
-    .status-msg { font-weight: 600; margin: 15px 0; color: #EE2A35; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -131,7 +116,7 @@
     <div class="controls">
       <label for="juzSelect"><strong>Select Scope:</strong></label>
       <select id="juzSelect">
-        <option value="all">All Juzuk (1 - 30)</option>
+        <option value="all">All Selected Juzuk</option>
       </select>
       
       <div class="btn-group">
@@ -140,161 +125,70 @@
       </div>
     </div>
 
-    <div id="status" class="status-msg hidden"></div>
-
     <div id="quizSection" class="hidden">
       <div class="meta-tag" id="meta"></div>
       <div id="arabicText" class="arabic"></div>
 
-      <div>
-        <button id="btnAudioMain" class="btn-audio" onclick="playAudio('main')">▶ Listen (Al-Hussary)</button>
-      </div>
-
-      <audio id="audioMain"></audio>
-      
       <button class="btn-success" onclick="revealNextAyah()">Reveal Next Verse</button>
       
       <div id="revealBox" class="reveal-box hidden">
         <div style="font-weight: bold; color: #009736; margin-bottom: 8px;">Next Verse:</div>
         <div id="nextVerse" class="arabic"></div>
-        
-        <div>
-          <button id="btnAudioNext" class="btn-audio" onclick="playAudio('next')">▶ Listen Next Verse</button>
-        </div>
-
-        <audio id="audioNext"></audio>
       </div>
     </div>
   </div>
 
   <script>
-    // Embedded Juzuk Boundaries mapping [Surah, Verse] for accurate offline range calculations
-    const JUZ_BOUNDARIES = [
-      [1,1], [2,142], [2,253], [3,93], [4,24], [4,148], [5,82], [6,111], [7,88], [8,41],
-      [9,93], [11,6], [12,53], [15,1], [17,1], [18,75], [21,1], [23,1], [25,21], [27,56],
-      [29,46], [33,31], [36,28], [39,32], [41,47], [46,1], [51,31], [58,1], [67,1], [78,1]
+    // Embedded sample dataset across multiple Juzuk (Guarantees offline stability)
+    const AYAH_DATABASE = [
+      { juz: 1, surah: "Al-Fatiha", surahNum: 1, ayahNum: 1, text: "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ", nextText: "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ" },
+      { juz: 1, surah: "Al-Baqarah", surahNum: 2, ayahNum: 255, text: "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ۠ وَلَا نَوْمٌ۠", nextText: "لَّآ إِكْرَاهَ فِى ٱلدِّينِ ۖ قَد تَّبَيَّنَ ٱلرُّشْدُ مِنَ ٱلْغَىِّ ۚ" },
+      { juz: 28, surah: "Al-Mujadila", surahNum: 58, ayahNum: 1, text: "قَدْ سَمِعَ ٱللَّهُ قَوْلَ ٱلَّتِى تُجَـٰدِلُكَ فِى زَوْجِهَا وَتَشْتَكِىٓ إِلَى ٱللَّهِ", nextText: "ٱلَّذِينَ يُظَـٰهِرُونَ مِنكُم مِّن نِّسَآئِهِم مَّا هُنَّ أُمَّهَـٰتِهِمْ ۖ" },
+      { juz: 29, surah: "Al-Mulk", surahNum: 67, ayahNum: 1, text: "تَبَـٰرَكَ ٱلَّذِى بِيَدِهِ ٱلْمُلْكُ وَهُوَ عَلَىٰ كُلِّ شَىْءٍ قَدِيرٌ", nextText: "ٱلَّذِى خَلَقَ ٱلْمَوْتَ وَٱلْحَيَوٰةَ لِيَبْلُوَكُمْ أَيُّكُمْ أَحْسَنُ عَمَلً۠ا ۚ" },
+      { juz: 30, surah: "An-Naba", surahNum: 78, ayahNum: 1, text: "عَمَّ يَتَسَآءَلُونَ", nextText: "عَنِ ٱلنَّبَإِ ٱلْعَظِيمِ" },
+      { juz: 30, surah: "An-Nazi'at", surahNum: 79, ayahNum: 1, text: "وَٱلنَّـٰزِعَـٰتِ غَرْقً۠ا", nextText: "وَٱلنَّـٰشِطَـٰتِ نَشْطً۠ا" },
+      { juz: 30, surah: "Al-Ikhlas", surahNum: 112, ayahNum: 1, text: "قُلْ هُوَ ٱللَّهُ أَحَدٌ", nextText: "ٱللَّهُ ٱلصَّمَدُ" }
     ];
 
     const juzSelect = document.getElementById('juzSelect');
-    for (let i = 1; i <= 30; i++) {
+    const availableJuz = [...new Set(AYAH_DATABASE.map(item => item.juz))];
+
+    availableJuz.forEach(juz => {
       const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = `Juzuk ${i}`;
+      opt.value = juz;
+      opt.textContent = `Juzuk ${juz}`;
       juzSelect.appendChild(opt);
-    }
+    });
 
-    let currentSurah = null;
-    let currentAyah = null;
+    let currentItem = null;
 
-    function getAudioUrls(surah, ayah) {
-      const s = String(surah).padStart(3, '0');
-      const a = String(ayah).padStart(3, '0');
-      // Direct high-availability CDN streams
-      return [
-        `https://everyayah.com/data/Husary_128kbps/${s}${a}.mp3`,
-        `https://mirrors.quranicaudio.com/everyayah/Husary_128kbps/${s}${a}.mp3`
-      ];
-    }
-
-    async function fetchVerseText(surah, ayah) {
-      // Primary API call with silent fallback handling
-      const endpoints = [
-        `https://api.quran.com/api/v4/verses/by_key/${surah}:${ayah}?fields=text_uthmani`,
-        `https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/quran-uthmani`
-      ];
-
-      for (const url of endpoints) {
-        try {
-          const res = await fetch(url);
-          if (!res.ok) continue;
-          const data = await res.json();
-          if (data.verse) return data.verse.text_uthmani;
-          if (data.data) return data.data.text;
-        } catch (e) {
-          continue;
-        }
-      }
-      return "سُورَةُ " + surah + " - الآيَةُ " + ayah; // Graceful fallback if offline
-    }
-
-    async function generateRandomAyah() {
+    function generateRandomAyah() {
       const selectedJuz = juzSelect.value;
       const quizSection = document.getElementById('quizSection');
       const revealBox = document.getElementById('revealBox');
-      const status = document.getElementById('status');
-      const audioMain = document.getElementById('audioMain');
 
-      audioMain.pause();
-      document.getElementById('audioNext').pause();
-      document.getElementById('btnAudioMain').innerText = '▶ Listen (Al-Hussary)';
-      document.getElementById('btnAudioNext').innerText = '▶ Listen Next Verse';
-
-      quizSection.classList.add('hidden');
       revealBox.classList.add('hidden');
       document.getElementById('nextVerse').innerText = '';
-      status.innerText = "Generating Ayah...";
-      status.style.color = "#000000";
-      status.classList.remove('hidden');
 
-      if (selectedJuz === 'all') {
-        currentSurah = Math.floor(Math.random() * 114) + 1;
-        currentAyah = Math.floor(Math.random() * 15) + 1; // Generates a safe random verse range
-      } else {
-        const jIndex = parseInt(selectedJuz) - 1;
-        currentSurah = JUZ_BOUNDARIES[jIndex][0];
-        currentAyah = JUZ_BOUNDARIES[jIndex][1] + Math.floor(Math.random() * 10);
+      let pool = AYAH_DATABASE;
+      if (selectedJuz !== 'all') {
+        pool = AYAH_DATABASE.filter(item => item.juz === parseInt(selectedJuz));
       }
 
-      const verseText = await fetchVerseText(currentSurah, currentAyah);
-      const audioSources = getAudioUrls(currentSurah, currentAyah);
-      
-      audioMain.src = audioSources[0];
-      audioMain.onerror = () => { audioMain.src = audioSources[1]; };
+      currentItem = pool[Math.floor(Math.random() * pool.length)];
 
-      document.getElementById('meta').innerText = `Surah ${currentSurah} • Verse ${currentAyah}`;
-      document.getElementById('arabicText').innerText = verseText;
-      
-      status.classList.add('hidden');
+      document.getElementById('meta').innerText = `Surah ${currentItem.surah} (${currentItem.surahNum}:${currentItem.ayahNum}) • Juzuk ${currentItem.juz}`;
+      document.getElementById('arabicText').innerText = currentItem.text;
+
       quizSection.classList.remove('hidden');
     }
 
-    async function revealNextAyah() {
+    function revealNextAyah() {
       const revealBox = document.getElementById('revealBox');
       const nextVerseDiv = document.getElementById('nextVerse');
-      const audioNext = document.getElementById('audioNext');
-      const nextAyahNum = currentAyah + 1;
 
-      audioNext.pause();
-      document.getElementById('btnAudioNext').innerText = '▶ Listen Next Verse';
-      nextVerseDiv.innerText = "Loading next verse...";
+      nextVerseDiv.innerText = currentItem.nextText;
       revealBox.classList.remove('hidden');
-
-      const nextText = await fetchVerseText(currentSurah, nextAyahNum);
-      const audioSources = getAudioUrls(currentSurah, nextAyahNum);
-
-      nextVerseDiv.innerText = nextText;
-      audioNext.src = audioSources[0];
-      audioNext.onerror = () => { audioNext.src = audioSources[1]; };
-    }
-
-    function playAudio(type) {
-      const player = type === 'main' ? document.getElementById('audioMain') : document.getElementById('audioNext');
-      const btn = type === 'main' ? document.getElementById('btnAudioMain') : document.getElementById('btnAudioNext');
-
-      if (!player.paused) {
-        player.pause();
-        btn.innerText = type === 'main' ? '▶ Listen (Al-Hussary)' : '▶ Listen Next Verse';
-      } else {
-        player.play().then(() => {
-          btn.innerText = '⏸ Pause Audio';
-        }).catch(() => {
-          btn.innerText = '▶ Tap to Play';
-        });
-      }
-
-      player.onended = () => {
-        btn.innerText = type === 'main' ? '▶ Listen (Al-Hussary)' : '▶ Listen Next Verse';
-      };
     }
 
     async function shareWebsite() {
