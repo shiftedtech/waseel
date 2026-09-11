@@ -17,6 +17,7 @@
     content="Waseel, Quran memory tester, random ayah generator, Hifz tester, Juzuk tester"
   >
 
+  <!-- Embedded SVG Favicon -->
   <link
     rel="icon"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 88 C20 65 5 45 5 28 A22 22 0 0 1 45 15 L50 22 L55 15 A22 22 0 0 1 95 28 C95 45 80 65 50 88 Z' fill='%23000000'/%3E%3Cpath d='M5 28 C5 15 20 8 35 12 L50 22 L65 12 C80 8 95 15 95 28 C95 38 87 50 72 61 L50 48 L5 28 Z' fill='%23FFFFFF'/%3E%3Cpath d='M50 48 L72 61 C57 73 38 82 50 88 C20 65 5 45 5 28 L50 48 Z' fill='%23009736'/%3E%3Cpath d='M5 28 L50 50 L5 72 Z' fill='%23EE2A35'/%3E%3C/svg%3E"
@@ -346,17 +347,10 @@
   </div>
 
   <script>
-    /*
-     * This app uses the Quran.com API.
-     *
-     * Important:
-     * The by_juz endpoint is paginated and supports a maximum
-     * of 50 verses per request. The code below loads the pages
-     * correctly and chooses a verse from the complete Juz.
-     */
-
     const API_BASE = "https://api.quran.com/api/v4";
-    const TRANSLATION_ID = 131;
+    const TRANSLATION_ID = 131; // English – Dr. Mustafa Khattab, the Clear Quran
+
+    const FORMSPREE_ENDPOINT = "https://formsubmit.co/ajax/el/heviyu";
 
     const juzSelect = document.getElementById("juzSelect");
     const generateButton = document.getElementById("generateButton");
@@ -388,22 +382,13 @@
     let currentSurah = null;
     let currentAyah = null;
 
-    /*
-     * Populate the Juz dropdown.
-     */
     for (let i = 1; i <= 30; i++) {
       const option = document.createElement("option");
-
       option.value = String(i);
       option.textContent = `Juzuk ${i}`;
-
       juzSelect.appendChild(option);
     }
 
-    /*
-     * Fetch JSON and throw a useful error when the server
-     * returns an HTTP error such as 400, 429, or 500.
-     */
     async function fetchJson(url) {
       const response = await fetch(url, {
         method: "GET",
@@ -421,15 +406,9 @@
       return response.json();
     }
 
-    /*
-     * Remove HTML tags from the translation returned by
-     * the Quran.com API.
-     */
     function cleanHtml(text) {
       const temporaryElement = document.createElement("div");
-
       temporaryElement.innerHTML = text || "";
-
       return (
         temporaryElement.textContent ||
         temporaryElement.innerText ||
@@ -440,7 +419,6 @@
     function getAudioUrl(surah, ayah) {
       const surahNumber = String(surah).padStart(3, "0");
       const ayahNumber = String(ayah).padStart(3, "0");
-
       return (
         "https://everyayah.com/data/" +
         `Husary_128kbps/${surahNumber}${ayahNumber}.mp3`
@@ -450,16 +428,12 @@
     function resetAudio() {
       audioMain.pause();
       audioNext.pause();
-
       audioMain.currentTime = 0;
       audioNext.currentTime = 0;
-
       audioMain.removeAttribute("src");
       audioNext.removeAttribute("src");
-
       audioMain.load();
       audioNext.load();
-
       btnAudioMain.textContent = "▶ Listen (Al-Hussary)";
       btnAudioNext.textContent = "▶ Listen Next Verse";
     }
@@ -474,22 +448,6 @@
       status.classList.add("hidden");
     }
 
-    /*
-     * Return a random verse from the selected Juz.
-     *
-     * The old code used per_page=300. That is the root problem:
-     * Quran.com supports a maximum of 50 records per request.
-     *
-     * This function:
-     * 1. Loads page 1.
-     * 2. Reads the total number of pages.
-     * 3. Chooses a random page.
-     * 4. Chooses a random verse from that page.
-     *
-     * This gives every verse in the Juz an equal chance because
-     * all pages normally contain up to 50 verses, with only the
-     * final page potentially containing fewer verses.
-     */
     async function getRandomVerseFromJuz(juzNumber) {
       const firstPageUrl =
         `${API_BASE}/verses/by_juz/${juzNumber}` +
@@ -535,9 +493,6 @@
       ];
     }
 
-    /*
-     * Get a random verse from all of the Quran or from one Juz.
-     */
     async function getRandomVerse() {
       const selectedJuz = juzSelect.value;
 
@@ -545,7 +500,8 @@
         const randomUrl =
           `${API_BASE}/verses/random` +
           "?language=en" +
-          "&words=false";
+          "&words=false" +
+          `&translations=${TRANSLATION_ID}`;
 
         const data = await fetchJson(randomUrl);
 
@@ -559,9 +515,6 @@
       return getRandomVerseFromJuz(Number(selectedJuz));
     }
 
-    /*
-     * Load one verse with Arabic text and English translation.
-     */
     async function getVerseDetails(verseKey) {
       const verseUrl =
         `${API_BASE}/verses/by_key/` +
@@ -593,10 +546,24 @@
       );
     }
 
-    /*
-     * Work out the next verse, including crossing from one
-     * Surah to the next.
-     */
+    function extractTranslation(verseObject) {
+      const translations = verseObject.translations || [];
+
+      const match = translations.find(
+        t => Number(t.resource_id) === TRANSLATION_ID
+      );
+
+      if (match && match.text) {
+        return cleanHtml(match.text);
+      }
+
+      if (translations.length > 0 && translations[0].text) {
+        return cleanHtml(translations[0].text);
+      }
+
+      return null;
+    }
+
     async function getNextVerseKey(surahNumber, ayahNumber) {
       const chapterUrl =
         `${API_BASE}/chapters/${surahNumber}` +
@@ -617,6 +584,34 @@
       }
 
       return null;
+    }
+
+    async function reportErrorToFormspree(error, context = {}) {
+      const payload = {
+        error_message: error instanceof Error
+          ? error.message
+          : String(error),
+        error_stack: error instanceof Error && error.stack
+          ? error.stack
+          : "",
+        user_agent: navigator.userAgent,
+        url: window.location.href,
+        timestamp: new Date().toISOString(),
+        ...context
+      };
+
+      try {
+        await fetch(FORMSPREE_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+      } catch (formError) {
+        console.error("Formspree error report failed:", formError);
+      }
     }
 
     async function generateRandomAyah() {
@@ -655,10 +650,7 @@
         const verse = await getVerseDetails(verseKey);
         const surahName = await getSurahName(currentSurah);
 
-        const translation =
-          verse.translations?.[0]?.text
-            ? cleanHtml(verse.translations[0].text)
-            : "";
+        const translation = extractTranslation(verse);
 
         meta.textContent =
           `Surah ${surahName} ` +
@@ -667,10 +659,13 @@
         arabicText.textContent =
           verse.text_uthmani || "Arabic text unavailable.";
 
-        mainTranslation.textContent =
-          translation
-            ? `"${translation}"`
-            : "Translation unavailable.";
+        if (translation) {
+          mainTranslation.textContent = `"${translation}"`;
+          mainTranslation.classList.remove("hidden");
+        } else {
+          mainTranslation.textContent = "Translation unavailable.";
+          mainTranslation.classList.remove("hidden");
+        }
 
         audioMain.src =
           getAudioUrl(currentSurah, currentAyah);
@@ -681,8 +676,13 @@
       } catch (error) {
         console.error("Generate error:", error);
 
+        await reportErrorToFormspree(error, {
+          selected_juz: juzSelect.value,
+          stage: "generateRandomAyah"
+        });
+
         showStatus(
-          "Connection error. Please check your internet connection and try again.",
+          "Connection error. An error report has been sent. Please try again.",
           "#EE2A35"
         );
       } finally {
@@ -722,25 +722,24 @@
         if (!nextVerseKey) {
           nextVerse.textContent =
             "End of the Quran reached.";
-
           return;
         }
 
         const verse = await getVerseDetails(nextVerseKey);
 
-        const translation =
-          verse.translations?.[0]?.text
-            ? cleanHtml(verse.translations[0].text)
-            : "";
+        const translation = extractTranslation(verse);
 
         nextVerse.textContent =
           verse.text_uthmani ||
           "Arabic text unavailable.";
 
-        nextTranslation.textContent =
-          translation
-            ? `"${translation}"`
-            : "Translation unavailable.";
+        if (translation) {
+          nextTranslation.textContent = `"${translation}"`;
+          nextTranslation.classList.remove("hidden");
+        } else {
+          nextTranslation.textContent = "Translation unavailable.";
+          nextTranslation.classList.remove("hidden");
+        }
 
         const [nextSurahNumber, nextAyahNumber] =
           nextVerseKey.split(":").map(Number);
@@ -751,18 +750,20 @@
             nextAyahNumber
           );
 
-        /*
-         * Update the current position so that pressing
-         * "Reveal Next Verse" again reveals the verse after it.
-         */
         currentSurah = nextSurahNumber;
         currentAyah = nextAyahNumber;
 
       } catch (error) {
         console.error("Reveal error:", error);
 
+        await reportErrorToFormspree(error, {
+          current_surah: currentSurah,
+          current_ayah: currentAyah,
+          stage: "revealNextAyah"
+        });
+
         nextVerse.textContent =
-          "Unable to load the next verse. Please try again.";
+          "Unable to load the next verse. An error report has been sent.";
       } finally {
         revealButton.disabled = false;
         revealButton.textContent = "Reveal Next Verse";
