@@ -340,7 +340,8 @@
 
   <script>
     const API_BASE = "https://api.quran.com/api/v4";
-    const TRANSLATION_ID = 131; // English – Dr. Mustafa Khattab, the Clear Quran
+    // Primary translation: English – Dr. Mustafa Khattab, the Clear Quran
+    const TRANSLATION_ID = 131;
     const FORMSPREE_ENDPOINT = "https://formsubmit.co/ajax/el/heviyu";
 
     const juzSelect = document.getElementById("juzSelect");
@@ -533,6 +534,9 @@
 
     // Extract translation text from verse object
     function extractTranslation(verseObject) {
+      // For debugging: log the entire verse object to the console
+      console.log("Verse object from API:", verseObject);
+
       const translations = verseObject.translations || [];
 
       // Prefer the requested translation ID
