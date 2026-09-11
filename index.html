@@ -12,7 +12,7 @@
   <!-- Embedded SVG Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 88 C20 65 5 45 5 28 A22 22 0 0 1 45 15 L50 22 L55 15 A22 22 0 0 1 95 28 C95 45 80 65 50 88 Z' fill='%23000000'/><path d='M5 28 C5 15 20 8 35 12 L50 22 L65 12 C80 8 95 15 95 28 C95 38 87 50 72 61 L50 48 L5 28 Z' fill='%23FFFFFF'/><path d='M50 48 L72 61 C57 73 38 82 50 88 C20 65 5 45 5 28 L50 48 Z' fill='%23009736'/><path d='M5 28 L50 50 L5 72 Z' fill='%23EE2A35'/></svg>">
 
-  <!-- Fixed Web App Manifest Data-URI -->
+  <!-- Web App Manifest -->
   <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Waseel%20Quran%20Tester%22%2C%22short_name%22%3A%22Waseel%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FFFFFF%22%2C%22theme_color%22%3A%22%23EE2A35%22%7D">
 
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
@@ -206,6 +206,13 @@
     let currentSurah = null;
     let currentAyah = null;
 
+    // Constructs reliable EveryAyah audio URLs formatted as SSSAAA.mp3
+    function getAudioUrl(surah, ayah) {
+      const s = String(surah).padStart(3, '0');
+      const a = String(ayah).padStart(3, '0');
+      return `https://everyayah.com/data/Husary_128kbps/${s}${a}.mp3`;
+    }
+
     async function generateRandomAyah() {
       const selectedJuz = juzSelect.value;
       const quizSection = document.getElementById('quizSection');
@@ -246,12 +253,8 @@
         currentSurah = ayahData.surah.number;
         currentAyah = ayahData.numberInSurah;
 
-        const audioRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${currentAyah}/ar.hussary`);
-        const audioData = await audioRes.json();
-        if (audioData.code === 200) {
-          let secureAudioUrl = audioData.data.audio.replace('http://', 'https://');
-          audioMain.src = secureAudioUrl;
-        }
+        // Set audio directly to EveryAyah CDN
+        audioMain.src = getAudioUrl(currentSurah, currentAyah);
 
         const transRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${currentAyah}/en.sahih`);
         const transData = await transRes.json();
@@ -291,12 +294,7 @@
         if (data.code === 200) {
           nextVerseDiv.innerText = data.data.text;
           
-          const audioRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/ar.hussary`);
-          const audioData = await audioRes.json();
-          if (audioData.code === 200) {
-            let secureAudioUrl = audioData.data.audio.replace('http://', 'https://');
-            audioNext.src = secureAudioUrl;
-          }
+          audioNext.src = getAudioUrl(currentSurah, nextAyahNum);
 
           const transRes = await fetch(`https://api.alquran.cloud/v1/ayah/${currentSurah}:${nextAyahNum}/en.sahih`);
           const transData = await transRes.json();
@@ -327,7 +325,7 @@
         player.play().then(() => {
           btn.innerText = '⏸ Pause Audio';
         }).catch(e => {
-          alert("Audio playback failed. Click 'Generate Random Verse' and try again.");
+          alert("Playback failed. Please try clicking play again.");
         });
       }
 
