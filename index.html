@@ -277,7 +277,6 @@
     let currentSurah = null;
     let currentAyah = null;
 
-    // Populate Juz dropdown
     for (let i = 1; i <= 30; i++) {
       const option = document.createElement("option");
       option.value = String(i);
@@ -355,26 +354,43 @@
       return getRandomVerseFromJuz(Number(selectedJuz));
     }
 
-    // Get verse with Arabic + translations in one call
     async function getVerseWithTranslation(verseKey, resourceId = TRANSLATION_ID) {
       const url =
         `${API_BASE}/verses/by_key/${encodeURIComponent(verseKey)}` +
         `?language=en&words=false&translations=${resourceId}&fields=text_uthmani`;
+
       const data = await fetchJson(url);
+
+      // Log the full response so we can see the exact structure
+      console.log("Full verse API response:", data);
+
       if (!data.verse) throw new Error(`Verse ${verseKey} not returned`);
       return data.verse;
-      // Structure:
-      // verse.translations = [ { resource_id: 131, text: "..." } ]
     }
 
     function extractTranslationText(verseObj, resourceId = TRANSLATION_ID) {
-      const list = verseObj.translations || [];
-      const match = list.find(t => Number(t.resource_id) === resourceId && t.text);
-      if (match) return cleanHtml(match.text);
-      // Fallback: first non-empty translation
-      for (const t of list) {
-        if (t && t.text) return cleanHtml(t.text);
+      const translations = verseObj.translations;
+
+      if (Array.isArray(translations)) {
+        const match = translations.find(t => Number(t.resource_id) === resourceId && t.text);
+        if (match) return cleanHtml(match.text);
+        for (const t of translations) {
+          if (t && t.text) return cleanHtml(t.text);
+        }
+        return null;
       }
+
+      if (translations && typeof translations === "object") {
+        const byId = translations[String(resourceId)] || translations[resourceId];
+        if (byId && byId.text) return cleanHtml(byId.text);
+
+        for (const key of Object.keys(translations)) {
+          const t = translations[key];
+          if (t && t.text) return cleanHtml(t.text);
+        }
+        return null;
+      }
+
       return null;
     }
 
