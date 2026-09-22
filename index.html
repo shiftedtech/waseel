@@ -225,10 +225,110 @@
         width: 100%;
       }
     }
+    /* Add to Home Screen */
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      max-width: 100%;
+      margin: 0 0 4px;
+    }
+
+    .btn-install {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 2px solid #000000;
+      background-color: #009736;
+      color: #ffffff;
+      box-shadow: 3px 3px 0 #000000;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .btn-install:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 #000000;
+    }
+
+    .btn-install svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .a2hs-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+
+    .a2hs-sheet {
+      background: #ffffff;
+      border: 2px solid #000000;
+      border-radius: 16px;
+      box-shadow: 6px 6px 0 #000000;
+      padding: 22px 20px 18px;
+      max-width: 380px;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 12px;
+    }
+
+    .a2hs-sheet h3 {
+      margin: 0 0 12px;
+      font-weight: 800;
+    }
+
+    .a2hs-sheet ol {
+      margin: 0 0 16px;
+      padding-left: 20px;
+      line-height: 1.7;
+    }
+
+    .a2hs-sheet .btn-close {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 2px solid #000000;
+      background: #000000;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    .share-glyph {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      vertical-align: -2px;
+    }
   </style>
 </head>
 
 <body>
+  <div class="topbar">
+    <button type="button" class="btn-install hidden" id="installButton" aria-label="Add Waseel to your home screen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      Add to Home Screen
+    </button>
+  </div>
+
+  <div id="a2hsOverlay" class="a2hs-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="a2hsTitle">
+    <div class="a2hs-sheet">
+      <h3 id="a2hsTitle">Add Waseel to your Home Screen</h3>
+      <ol id="a2hsSteps"></ol>
+      <button type="button" class="btn-close" id="a2hsClose">Got it</button>
+    </div>
+  </div>
   <div class="card">
     <h2>Waseel • Quran Memory Tester</h2>
 
@@ -659,6 +759,81 @@
       .addEventListener("click", () => {
         playAudio("next");
       });
+
+    // ---- Add to Home Screen ----
+    const installButton = document.getElementById("installButton");
+    const a2hsOverlay = document.getElementById("a2hsOverlay");
+    const a2hsSteps = document.getElementById("a2hsSteps");
+    let deferredInstallPrompt = null;
+
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+
+    const ua = navigator.userAgent;
+    const isIOS =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    const shareIcon =
+      '<svg class="share-glyph" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 11v9h14v-9"/></svg>';
+
+    function showInstructions() {
+      if (isIOS) {
+        a2hsSteps.innerHTML =
+          `<li>Open this page in <strong>Safari</strong>.</li>` +
+          `<li>Tap the <strong>Share</strong> button ${shareIcon} in the toolbar.</li>` +
+          `<li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>` +
+          `<li>Tap <strong>Add</strong>.</li>`;
+      } else {
+        a2hsSteps.innerHTML =
+          `<li>Open your browser menu <strong>(⋮)</strong>.</li>` +
+          `<li>Tap <strong>Add to Home screen</strong> or <strong>Install app</strong>.</li>` +
+          `<li>Confirm by tapping <strong>Add</strong> / <strong>Install</strong>.</li>`;
+      }
+      a2hsOverlay.classList.remove("hidden");
+    }
+
+    if (!isStandalone) {
+      installButton.classList.remove("hidden");
+    }
+
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+    });
+
+    window.addEventListener("appinstalled", () => {
+      installButton.classList.add("hidden");
+      deferredInstallPrompt = null;
+    });
+
+    installButton.addEventListener("click", async () => {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        if (choice.outcome === "accepted") {
+          installButton.classList.add("hidden");
+        }
+        return;
+      }
+      showInstructions();
+    });
+
+    document.getElementById("a2hsClose").addEventListener("click", () => {
+      a2hsOverlay.classList.add("hidden");
+    });
+
+    a2hsOverlay.addEventListener("click", event => {
+      if (event.target === a2hsOverlay) {
+        a2hsOverlay.classList.add("hidden");
+      }
+    });
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
   </script>
 </body>
 </html>
