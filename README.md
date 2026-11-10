@@ -37,7 +37,7 @@
 
 # 📖 Waseel (وسيل)
 
-[**🚀 Launch Waseel App ↗**](https://shiftedtech.github.io/waseel/) &nbsp;•&nbsp; [**✨ Features**](#-key-features) &nbsp;•&nbsp; [**💡 How It Works**](#-how-it-works) &nbsp;•&nbsp; [**⚖️ Legal & Licensing**](#️-legal--licensing)
+[**🚀 Launch Waseel App ↗**](https://shiftedtechsg.com/taptap/waseel/) &nbsp;•&nbsp; [**✨ Features**](#-key-features) &nbsp;•&nbsp; [**💡 How It Works**](#-how-it-works) &nbsp;•&nbsp; [**⚖️ Legal & Licensing**](#️-legal--licensing)
 
 ---
 
